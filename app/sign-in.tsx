@@ -1,10 +1,25 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, Alert } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "@/constants/images";
 import icons from "@/constants/icons";
+import { login } from "@/lib/appwrite";
+import { Redirect } from "expo-router";
+import { useGlobalContext } from "@/lib/global-provider";
 
 const SignIn = () => {
+  const { refetch, loading, isLogged } = useGlobalContext();
+
+  if (!loading && isLogged) return <Redirect href="/" />;
+
+  const handleLogin = async () => {
+    const result = await login();
+    if (result) {
+      refetch();
+    } else {
+      Alert.alert("Error", "Failed to login");
+    }
+  };
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView
@@ -31,7 +46,7 @@ const SignIn = () => {
             Login to Estates with Google
           </Text>
 
-          <TouchableOpacity onPress={() => {}} className="bg-white shadow-md shadow-zinc-300 rounded-full w-full py-2 mt-4">
+          <TouchableOpacity onPress={handleLogin} className="bg-white shadow-md shadow-zinc-300 rounded-full w-full py-2 mt-4">
           <View className="flex flex-row items-center justify-center">
               <Image
                 source={icons.google}
